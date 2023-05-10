@@ -113,6 +113,8 @@ control dash_ingress(
                          @Sai[type="sai_uint32_t"]
                          bit<24> vm_vni,
                          bit<16> vnet_id,
+                         bit<16> v4_meter_policy,
+                         bit<16> v6_meter_policy,
                          ACL_GROUPS_PARAM(inbound_v4),
                          ACL_GROUPS_PARAM(inbound_v6),
                          ACL_GROUPS_PARAM(outbound_v4),
@@ -128,12 +130,14 @@ control dash_ingress(
         meta.vnet_id                 = vnet_id;
 
         if (meta.is_overlay_ip_v6 == 1) {
+	    meta.meter_policy = v6_meter_policy;
             if (meta.direction == dash_direction_t.OUTBOUND) {
                 ACL_GROUPS_COPY_TO_META(outbound_v6);
             } else {
                 ACL_GROUPS_COPY_TO_META(inbound_v6);
             }
         } else {
+	    meta.meter_policy = v4_meter_policy;
             if (meta.direction == dash_direction_t.OUTBOUND) {
                 ACL_GROUPS_COPY_TO_META(outbound_v4);
             } else {
@@ -174,11 +178,12 @@ control dash_ingress(
 #endif // DPDK_SUPPORTS_DIRECT_COUNTER_ON_WILDCARD_KEY_TABLE
 #endif // TARGET_DPDK_PNA
 
+    @name("eni_meter|dash_eni_meter")
     table eni_meter {
         key = {
             meta.eni_id : exact @name("meta.eni_id:eni_id");
             meta.direction : exact @name("meta.direction:direction");
-            meta.dropped : exact @name("meta.dropped:dropped");
+            meta.metering_class : exact @name("meta.metering_class:metering_class");
         }
 
         actions = { NoAction; }

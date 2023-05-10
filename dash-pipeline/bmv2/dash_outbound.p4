@@ -9,20 +9,31 @@
 control outbound(inout headers_t hdr,
                  inout metadata_t meta)
 {
-    action route_vnet(bit<16> dst_vnet_id) {
+    action route_vnet(bit<16> dst_vnet_id,
+                      bit<1> metering_policy_en,
+                      bit<16> metering_class) {
         meta.dst_vnet_id = dst_vnet_id;
+	meta.metering_policy_en = metering_policy_en;
+	meta.metering_class = metering_class;
     }
 
     action route_vnet_direct(bit<16> dst_vnet_id,
+                             bit<1> metering_policy_en,
+                             bit<16> metering_class,
                              bit<1> is_overlay_ip_v4_or_v6,
                              IPv4ORv6Address overlay_ip) {
         meta.dst_vnet_id = dst_vnet_id;
         meta.lkup_dst_ip_addr = overlay_ip;
         meta.is_lkup_dst_ip_v6 = is_overlay_ip_v4_or_v6;
+	meta.metering_policy_en = metering_policy_en;
+	meta.metering_class = metering_class;
     }
 
-    action route_direct() {
+    action route_direct(bit<1> metering_policy_en,
+                        bit<16> metering_class) {
         /* send to underlay router without any encap */
+	meta.metering_policy_en = metering_policy_en;
+	meta.metering_class = metering_class;
     }
 
     action drop() {
@@ -42,6 +53,8 @@ control outbound(inout headers_t hdr,
                                 bit<1> is_underlay_sip_v4_or_v6,
                                 IPv4ORv6Address underlay_sip,
                                 dash_encapsulation_t dash_encapsulation,
+                                bit<1> metering_policy_en,
+                                bit<16> metering_class,
                                 bit<24> tunnel_key) {
         /* Assume the overlay addresses provided are always IPv6 and the original are IPv4 */
         /* assert(is_overlay_dip_v4_or_v6 == 1 && is_overlay_sip_v4_or_v6 == 1);
@@ -62,6 +75,9 @@ control outbound(inout headers_t hdr,
         meta.encap_data.overlay_dmac = hdr.ethernet.dst_addr;
         meta.encap_data.dash_encapsulation = dash_encapsulation;
         meta.encap_data.service_tunnel_key = tunnel_key;
+
+	meta.metering_policy_en = metering_policy_en;
+	meta.metering_class = metering_class;
     }
 
 #ifdef TARGET_BMV2_V1MODEL
@@ -104,11 +120,15 @@ control outbound(inout headers_t hdr,
 
     action set_tunnel_mapping(IPv4Address underlay_dip,
                               EthernetAddress overlay_dmac,
-                              bit<1> use_dst_vnet_vni) {
+                              bit<1> override_meter,
+                              bit<16> metering_class,
+	                      bit<1> use_dst_vnet_vni) {
         if (use_dst_vnet_vni == 1)
             meta.vnet_id = meta.dst_vnet_id;
         meta.encap_data.overlay_dmac = overlay_dmac;
         meta.encap_data.underlay_dip = underlay_dip;
+	meta.override_meter = override_meter;
+	meta.mapping_metering_class = metering_class;
     }
 
 #ifdef TARGET_BMV2_V1MODEL
@@ -158,6 +178,22 @@ control outbound(inout headers_t hdr,
         actions = {
             set_vnet_attrs;
         }
+    }
+
+    action set_metering_class(bit<16> metering_class) {
+	meta.metering_class = metering_class;
+    }
+
+    @name("meter_policy|dash_meter_policy")
+    table meter_policy {
+	key = {
+	    meta.meter_policy : ternary @name("meta.meter_policy:meter_policy");
+            meta.is_lkup_dst_ip_v6 : exact @name("meta.is_lkup_dst_ip_v6:is_dip_v4_or_v6");
+            meta.lkup_dst_ip_addr : exact @name("meta.lkup_dst_ip_addr:dip");
+	}
+	actions = {
+	    set_metering_class;
+	}
     }
 
     apply {
@@ -221,6 +257,12 @@ control outbound(inout headers_t hdr,
                 }
              }
          }
+
+	if (meta.metering_policy_en == 1)
+	    meter_policy.apply();
+
+	if (meta.override_meter == 1)
+	    meta.metering_class = meta.mapping_metering_class;
     }
 }
 

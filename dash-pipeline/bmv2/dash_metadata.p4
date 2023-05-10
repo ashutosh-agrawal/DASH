@@ -64,6 +64,11 @@ struct metadata_t {
     bit<16> stage5_dash_acl_group_id;
     tag_map_t src_tag_map;
     tag_map_t dst_tag_map;
+    bit<16> meter_policy;
+    bit<1> metering_policy_en;
+    bit<16> metering_class;
+    bit<1> override_meter;
+    bit<16> mapping_metering_class;
 }
 
 #endif /* _SIRIUS_METADATA_P4_ */
