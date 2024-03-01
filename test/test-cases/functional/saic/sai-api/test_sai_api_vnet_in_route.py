@@ -114,7 +114,7 @@ class TestSaiVnetInboundRoutingEntry:
         print("\n======= SAI commands RETURN values create =======")
         pprint(results)
 
-    @pytest.mark.skip(reason="https://github.com/sonic-net/DASH/issues/345 [P4Runtime] Invalid match type")
+    #@pytest.mark.skip(reason="https://github.com/sonic-net/DASH/issues/345 [P4Runtime] Invalid match type")
     def test_vnet_inbound_routing_entry_create(self, dpu):
 
         commands = [
@@ -132,7 +132,7 @@ class TestSaiVnetInboundRoutingEntry:
                 },
                 "attributes": [
                     "SAI_INBOUND_ROUTING_ENTRY_ATTR_ACTION",
-                    "SAI_INBOUND_ROUTING_ENTRY_ACTION_VXLAN_DECAP_PA_VALIDATE",
+                    "SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP_PA_VALIDATE",
                     "SAI_INBOUND_ROUTING_ENTRY_ATTR_SRC_VNET_ID",
                     "$vnet"
                 ]
@@ -175,7 +175,7 @@ class TestSaiVnetInboundRoutingEntry:
                 },
                 "attribute": [
                     "SAI_INBOUND_ROUTING_ENTRY_ATTR_ACTION",
-                    "SAI_INBOUND_ROUTING_ENTRY_ACTION_VXLAN_DECAP_CA_VALIDATE",
+                    "SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP_CA_VALIDATE",
                 ]
             },
         ]
@@ -198,7 +198,7 @@ class TestSaiVnetInboundRoutingEntry:
         print("\n======= SAI commands RETURN values get =======")
         pprint(results)
 
-    @pytest.mark.skip(reason="https://github.com/sonic-net/DASH/issues/345 [P4Runtime] Invalid match type")
+    #@pytest.mark.skip(reason="https://github.com/sonic-net/DASH/issues/345 [P4Runtime] Invalid match type")
     def test_vnet_inbound_routing_entry_remove(self, dpu):
         
         commands = [

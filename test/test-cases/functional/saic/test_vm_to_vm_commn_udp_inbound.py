@@ -36,7 +36,7 @@ Topology Used :
 ###############################################################
 
 
-@pytest.mark.skip(reason="https://github.com/sonic-net/DASH/issues/345")
+#@pytest.mark.skip(reason="https://github.com/sonic-net/DASH/issues/345")
 class TestUdpInbound:
     @pytest.fixture(scope="class")
     def setup_config(self):

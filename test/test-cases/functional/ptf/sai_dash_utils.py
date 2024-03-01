@@ -239,7 +239,7 @@ class VnetAPI(VnetObjects):
     def inbound_routing_decap_validate_create(self, eni_id, vni, sip, sip_mask, src_vnet_id):
         """
         Create inbound routing entry with
-        SAI_INBOUND_ROUTING_ENTRY_ACTION_VXLAN_DECAP_PA_VALIDATE action
+        SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP_PA_VALIDATE action
         """
 
         inbound_routing_entry = sai_thrift_inbound_routing_entry_t(
@@ -247,7 +247,7 @@ class VnetAPI(VnetObjects):
             eni_id=eni_id, sip=sai_ipaddress(sip),
             sip_mask=sai_ipaddress(sip_mask), priority=0)
         sai_thrift_create_inbound_routing_entry(self.client, inbound_routing_entry,
-                                                action=SAI_INBOUND_ROUTING_ENTRY_ACTION_VXLAN_DECAP_PA_VALIDATE,
+                                                action=SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP_PA_VALIDATE,
                                                 src_vnet_id=src_vnet_id)
         self.assertEqual(self.status(), SAI_STATUS_SUCCESS)
         self.add_teardown_obj(self.inbound_routing_remove, inbound_routing_entry)
@@ -256,7 +256,7 @@ class VnetAPI(VnetObjects):
     def inbound_routing_decap_create(self, eni_id, vni, sip, sip_mask):
         """
         Create inbound routing entry with
-        SAI_INBOUND_ROUTING_ENTRY_ACTION_VXLAN_DECAP action
+        SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP action
         """
 
         inbound_routing_entry = sai_thrift_inbound_routing_entry_t(
@@ -264,7 +264,7 @@ class VnetAPI(VnetObjects):
             eni_id=eni_id, sip=sai_ipaddress(sip),
             sip_mask=sai_ipaddress(sip_mask), priority=0)
         sai_thrift_create_inbound_routing_entry(self.client, inbound_routing_entry,
-                                                action=SAI_INBOUND_ROUTING_ENTRY_ACTION_VXLAN_DECAP)
+                                                action=SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP)
         self.assertEqual(self.status(), SAI_STATUS_SUCCESS)
         self.add_teardown_obj(self.inbound_routing_remove, inbound_routing_entry)
         return inbound_routing_entry

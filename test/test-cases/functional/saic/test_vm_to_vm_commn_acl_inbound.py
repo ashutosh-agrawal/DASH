@@ -38,7 +38,7 @@ Topology Used :
 ###############################################################
 
 
-@pytest.mark.skip(reason="https://github.com/sonic-net/DASH/issues/345")
+#@pytest.mark.skip(reason="https://github.com/sonic-net/DASH/issues/345")
 class TestAclInbound:
     @pytest.fixture(scope="class")
     def setup_config(self):
@@ -129,7 +129,7 @@ class TestAclInbound:
         print("\n======= Verify traffic with denied packets failing =======")
         print("\n======= Start traffic =======")
         su.start_traffic(dataplane, f2.name)
-        flow_names=[f1.name, f2.name, f3.name, f4.name]
+        flow_names=[f2.name, f3.name, f4.name]
         while(True):
             if (dataplane.is_traffic_stopped(flow_names)):
                 break
