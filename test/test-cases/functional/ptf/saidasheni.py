@@ -172,7 +172,7 @@ class CreateDeleteEniTest(VnetAPI):
 
         self.inbound_routing_entry = self.inbound_routing_decap_validate_create(
             eni_id=self.eni, vni=self.vm_vni,
-            sip=self.sip, sip_mask="0xFFFFFF00",
+            sip=self.sip, sip_mask="255.255.255.0",
             src_vnet_id=self.outbound_vnet
         )
 

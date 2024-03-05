@@ -1435,7 +1435,7 @@ class Vnet2VnetInboundEniSetUpDownTwoPortsTest(Vnet2VnetInboundEniSetUpDownSingl
 
 
 @group("draft")
-@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
+#@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
 class Vnet2VnetOutboundRouteVnetDirectSinglePortTest(VnetApiEndpoints, VnetTrafficMixin):
     """
     Outbound Vnet to Vnet test scenario with Outbound routing entry

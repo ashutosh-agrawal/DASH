@@ -547,10 +547,14 @@ class VnetApiEndpoints(VnetAPI):
         """
 
         self.rx_host.port = self.tx_host.port
-        self.rx_host.mac = self.tx_host.mac
+        # MAC address is hardcoded to 0 since underlay routing is not completely implemented.
+        self.rx_host.mac = "00:00:00:00:00:00"
+#        self.rx_host.mac = self.tx_host.mac
 
         self.rx_host.peer.port = self.tx_host.peer.port
-        self.rx_host.peer.mac = self.tx_host.peer.mac
+        # MAC address is hardcoded to 0 since underlay routing is not completely implemented.
+        self.rx_host.peer_mac = "00:00:00:00:00:00"
+#        self.rx_host.peer.mac = self.tx_host.peer.mac
         self.rx_host.peer.ip = self.tx_host.peer.ip
 
     @staticmethod
