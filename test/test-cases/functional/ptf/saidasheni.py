@@ -41,7 +41,8 @@ class CreateDeleteEniTest(VnetAPI):
         self.eni_mac = '00:11:22:33:44:55'  # ENI MAC address
         self.vm_underlay_dip = sai_ipaddress('192.168.1.5')  # ENI VM underlay DIP
 
-        self.sip = '10.0.1.2'  # PA validation entry SIP address
+        self.sip = '10.0.1.0'  # PA validation entry SIP address
+        self.sip_mask = '255.255.255.0'
 
     def runTest(self):
         # Not all tests are interdependent,
@@ -172,8 +173,7 @@ class CreateDeleteEniTest(VnetAPI):
 
         self.inbound_routing_entry = self.inbound_routing_decap_validate_create(
             eni_id=self.eni, vni=self.vm_vni,
-            #sip=self.sip, sip_mask=self.sip_mask,
-            sip="1.1.1.0", sip_mask="255.255.255.0",
+            sip=self.sip, sip_mask=self.sip_mask,
             src_vnet_id=self.outbound_vnet
         )
 
