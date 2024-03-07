@@ -1603,7 +1603,7 @@ class Vnet2VnetOutboundRouteVnetDirectTwoPortsOverlayIpv6Test(Vnet2VnetOutboundR
 
 
 @group("draft")
-@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
+#@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
 class Vnet2VnetOutboundRouteVnetSinglePortTest(VnetApiEndpoints, VnetTrafficMixin):
     """
     Outbound Vnet to Vnet test scenario with outbound routing entry
