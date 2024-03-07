@@ -245,7 +245,7 @@ class VnetAPI(VnetObjects):
         inbound_routing_entry = sai_thrift_inbound_routing_entry_t(
             switch_id=self.switch_id, vni=vni,
             eni_id=eni_id, sip=sai_ipaddress(sip),
-            sip_mask=sai_ipaddress(sip_mask), priority=0)
+            sip_mask=sai_ipaddress(sip_mask), priority=1)
         sai_thrift_create_inbound_routing_entry(self.client, inbound_routing_entry,
                                                 action=SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP_PA_VALIDATE,
                                                 src_vnet_id=src_vnet_id)
@@ -258,11 +258,11 @@ class VnetAPI(VnetObjects):
         Create inbound routing entry with
         SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP action
         """
-
+        print("sip: {}, sip_mask: {}".format(sip, sip_mask))
         inbound_routing_entry = sai_thrift_inbound_routing_entry_t(
             switch_id=self.switch_id, vni=vni,
             eni_id=eni_id, sip=sai_ipaddress(sip),
-            sip_mask=sai_ipaddress(sip_mask), priority=0)
+            sip_mask=sai_ipaddress(sip_mask), priority=1)
         sai_thrift_create_inbound_routing_entry(self.client, inbound_routing_entry,
                                                 action=SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP)
         self.assertEqual(self.status(), SAI_STATUS_SUCCESS)
