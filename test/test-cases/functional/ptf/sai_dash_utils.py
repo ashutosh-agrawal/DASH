@@ -258,7 +258,7 @@ class VnetAPI(VnetObjects):
         Create inbound routing entry with
         SAI_INBOUND_ROUTING_ENTRY_ACTION_TUNNEL_DECAP action
         """
-        print("sip: {}, sip_mask: {}".format(sip, sip_mask))
+
         inbound_routing_entry = sai_thrift_inbound_routing_entry_t(
             switch_id=self.switch_id, vni=vni,
             eni_id=eni_id, sip=sai_ipaddress(sip),
