@@ -116,7 +116,6 @@ class UnderlayRouteTest(VnetApiEndpoints, VnetTrafficMixin):
 
 
 @group("draft")
-@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
 class Vnet2VnetInboundDecapPaValidateSinglePortTest(VnetApiEndpoints, VnetTrafficMixin):
     """
     Inbound Vnet to Vnet scenario test case with
@@ -155,8 +154,9 @@ class Vnet2VnetInboundDecapPaValidateSinglePortTest(VnetApiEndpoints, VnetTraffi
         self.eni_mac_map_create(eni_id, self.rx_host.client.mac)  # ENI MAC
 
         # Inbound routing PA Validate
+        addr_mask = self.tx_host.ip_prefix.split('/')
         self.inbound_routing_decap_validate_create(eni_id, vni=self.tx_host.client.vni,
-                                                   sip=self.tx_host.ip, sip_mask="255.255.255.0",
+                                                   sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]),
                                                    src_vnet_id=src_vnet)
         # PA validation entry with Permit action
         self.pa_validation_create(self.tx_host.ip, src_vnet)
@@ -203,7 +203,6 @@ class Vnet2VnetInboundDecapPaValidateSinglePortTest(VnetApiEndpoints, VnetTraffi
 
 
 @group("draft")
-@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
 class Vnet2VnetInboundDecapPaValidateSinglePortOverlayIpv6Test(Vnet2VnetInboundDecapPaValidateSinglePortTest):
     """
     Underlay IPv4 and Overlay IPv6 configs
@@ -257,7 +256,7 @@ class Vnet2VnetInboundDecapPaValidateTwoPortsOverlayIpv6Test(Vnet2VnetInboundDec
 
 
 @group("draft")
-@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
+#@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
 class Vnet2VnetInboundDecapSinglePortTest(Vnet2VnetInboundDecapPaValidateSinglePortTest):
     """
     Inbound Vnet to Vnet scenario test case with
@@ -286,8 +285,9 @@ class Vnet2VnetInboundDecapSinglePortTest(Vnet2VnetInboundDecapPaValidateSingleP
         self.eni_mac_map_create(eni_id, self.rx_host.client.mac)  # ENI MAC
 
         # Inbound routing PA Validate
+        addr_mask = self.tx_host.ip_prefix.split('/')
         self.inbound_routing_decap_create(eni_id, vni=self.tx_host.client.vni,
-                                          sip=self.tx_host.ip, sip_mask="255.255.255.0")
+                                          sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]))
 
     def vnet2VnetInboundNegativeTest(self):
         """
@@ -368,7 +368,7 @@ class Vnet2VnetInboundDecapTwoPortsOverlayIpv6Test(Vnet2VnetInboundDecapSinglePo
 
 
 @group("draft")
-@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
+#@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
 class Vnet2VnetInboundMultiplePaValidatesSingleEniSinglePortTest(VnetApiEndpoints, VnetTrafficMixin):
     """
     Inbound Vnet to Vnet scenario test case with single eni and
@@ -428,7 +428,7 @@ class Vnet2VnetInboundMultiplePaValidatesSingleEniSinglePortTest(VnetApiEndpoint
         self.tx_host_3 = self.define_neighbor_network(port=self.tx_host_0.port,
                                                       mac=self.tx_host_0.mac,
                                                       ip="11.0.0.1",
-                                                      ip_prefix="11.0.0.1/24",
+                                                      ip_prefix="11.0.0.0/24",
                                                       peer_port=self.tx_host_0.peer.port,
                                                       peer_mac=self.tx_host_0.peer.mac,
                                                       peer_ip=self.tx_host_0.peer.ip,
@@ -454,26 +454,30 @@ class Vnet2VnetInboundMultiplePaValidatesSingleEniSinglePortTest(VnetApiEndpoint
         self.eni_mac_map_create(eni_id, self.rx_host.client.mac)  # ENI MAC
 
         # Inbound routing decap
+        addr_mask = self.tx_host_3.ip_prefix.split('/')
         self.inbound_routing_decap_create(eni_id, vni=self.tx_host_3.client.vni,
-                                          sip=self.tx_host_3.ip, sip_mask="255.255.255.0")
+                                          sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]))
 
         # Inbound routing decap PA Validate tx_host_0
+        addr_mask = self.tx_host_0.ip_prefix.split('/')
         self.inbound_routing_decap_validate_create(eni_id, vni=self.tx_host_0.client.vni,
-                                                   sip=self.tx_host_0.ip, sip_mask="255.255.255.0",
+                                                   sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]),
                                                    src_vnet_id=src_vnet_0)
         # PA validation entry with Permit action tx_host_0
         self.pa_validation_create(self.tx_host_0.ip, src_vnet_0)
 
         # Inbound routing decap PA Validate tx_host_1
+        addr_mask = self.tx_host_1.ip_prefix.split('/')
         self.inbound_routing_decap_validate_create(eni_id, vni=self.tx_host_1.client.vni,
-                                                   sip=self.tx_host_1.ip, sip_mask="255.255.255.0",
+                                                   sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]),
                                                    src_vnet_id=src_vnet_1)
         # PA validation entry with Permit action tx_host_1
         self.pa_validation_create(self.tx_host_1.ip, src_vnet_1)
 
         # Inbound routing decap PA Validate tx_host_2
+        addr_mask = self.tx_host_2.ip_prefix.split('/')
         self.inbound_routing_decap_validate_create(eni_id, vni=self.tx_host_2.client.vni,
-                                                   sip=self.tx_host_2.ip, sip_mask="255.255.255.0",
+                                                   sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]),
                                                    src_vnet_id=src_vnet_2)
         # PA validation entry with Permit action tx_host_2
         self.pa_validation_create(self.tx_host_2.ip, src_vnet_2)
@@ -552,7 +556,7 @@ class Vnet2VnetInboundMultiplePaValidatesSingleEniSinglePortTest(VnetApiEndpoint
 
 
 @group("draft")
-@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
+#@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
 class Vnet2VnetInboundMultiplePaValidatesSingleEniSinglePortOverlayIpv6Test(Vnet2VnetInboundMultiplePaValidatesSingleEniSinglePortTest):
     """
     Underlay IPv4 and Overlay IPv6 configs
@@ -610,7 +614,7 @@ class Vnet2VnetInboundMultiplePaValidatesSingleEniSinglePortOverlayIpv6Test(Vnet
         self.tx_host_3 = self.define_neighbor_network(port=self.tx_host_0.port,
                                                       mac=self.tx_host_0.mac,
                                                       ip="11.0.0.1",
-                                                      ip_prefix="11.0.0.1/24",
+                                                      ip_prefix="11.0.0.0/24",
                                                       peer_port=self.tx_host_0.peer.port,
                                                       peer_mac=self.tx_host_0.peer.mac,
                                                       peer_ip=self.tx_host_0.peer.ip,
@@ -636,26 +640,30 @@ class Vnet2VnetInboundMultiplePaValidatesSingleEniSinglePortOverlayIpv6Test(Vnet
         self.eni_mac_map_create(eni_id, self.rx_host.client.mac)  # ENI MAC
 
         # Inbound routing decap
+        addr_mask = self.tx_host_3.ip_prefix.split('/')
         self.inbound_routing_decap_create(eni_id, vni=self.tx_host_3.client.vni,
-                                          sip=self.tx_host_3.ip, sip_mask="255.255.255.0")
+                                          sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]))
 
         # Inbound routing decap PA Validate tx_host_0
+        addr_mask = self.tx_host_0.ip_prefix.split('/')
         self.inbound_routing_decap_validate_create(eni_id, vni=self.tx_host_0.client.vni,
-                                                   sip=self.tx_host_0.ip, sip_mask="255.255.255.0",
+                                                   sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]),
                                                    src_vnet_id=src_vnet_0)
         # PA validation entry with Permit action tx_host_0
         self.pa_validation_create(self.tx_host_0.ip, src_vnet_0)
 
         # Inbound routing decap PA Validate tx_host_1
+        addr_mask = self.tx_host_1.ip_prefix.split('/')
         self.inbound_routing_decap_validate_create(eni_id, vni=self.tx_host_1.client.vni,
-                                                   sip=self.tx_host_1.ip, sip_mask="255.255.255.0",
+                                                   sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]),
                                                    src_vnet_id=src_vnet_1)
         # PA validation entry with Permit action tx_host_1
         self.pa_validation_create(self.tx_host_1.ip, src_vnet_1)
 
         # Inbound routing decap PA Validate tx_host_2
+        addr_mask = self.tx_host_2.ip_prefix.split('/')
         self.inbound_routing_decap_validate_create(eni_id, vni=self.tx_host_2.client.vni,
-                                                   sip=self.tx_host_2.ip, sip_mask="255.255.255.0",
+                                                   sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]),
                                                    src_vnet_id=src_vnet_2)
         # PA validation entry with Permit action tx_host_2
         self.pa_validation_create(self.tx_host_2.ip, src_vnet_2)
@@ -744,7 +752,7 @@ class Vnet2VnetInboundMultiplePaValidatesSingleEniTwoPortsOverlayIpv6Test(Vnet2V
 
 
 @group("draft")
-@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
+#@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
 class Vnet2VnetInboundMultiplePaValidatesMultipleEniSinglePortTest(VnetApiEndpoints, VnetTrafficMixin):
     """
     Inbound Vnet to Vnet scenario test case with
@@ -832,12 +840,14 @@ class Vnet2VnetInboundMultiplePaValidatesMultipleEniSinglePortTest(VnetApiEndpoi
         self.eni_mac_map_create(eni_id_0, self.rx_host_0.client.mac)  # ENI MAC
 
         # Inbound routing decap
+        addr_mask = self.tx_host_2.ip_prefix.split('/')
         self.inbound_routing_decap_create(eni_id_0, vni=self.tx_host_2.client.vni,
-                                          sip=self.tx_host_2.ip, sip_mask="255.255.255.0")
+                                          sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]))
 
         # Inbound routing decap PA Validate
+        addr_mask = self.tx_host_0.ip_prefix.split('/')
         self.inbound_routing_decap_validate_create(eni_id_0, vni=self.tx_host_0.client.vni,
-                                                   sip=self.tx_host_0.ip, sip_mask="255.255.255.0",
+                                                   sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]),
                                                    src_vnet_id=src_vnet_0)
         # PA validation entry with Permit action
         self.pa_validation_create(self.tx_host_0.ip, src_vnet_0)
@@ -850,8 +860,9 @@ class Vnet2VnetInboundMultiplePaValidatesMultipleEniSinglePortTest(VnetApiEndpoi
         self.eni_mac_map_create(eni_id_1, self.rx_host_1.client.mac)  # ENI MAC
 
         # Inbound routing PA Validate
+        addr_mask = self.tx_host_1.ip_prefix.split('/')
         self.inbound_routing_decap_validate_create(eni_id_1, vni=self.tx_host_1.client.vni,
-                                                   sip=self.tx_host_1.ip, sip_mask="255.255.255.0",
+                                                   sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]),
                                                    src_vnet_id=src_vnet_1)
         # PA validation entry with Permit action
         self.pa_validation_create(self.tx_host_1.ip, src_vnet_1)
@@ -910,7 +921,7 @@ class Vnet2VnetInboundMultiplePaValidatesMultipleEniSinglePortTest(VnetApiEndpoi
 
 
 @group("draft")
-@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
+#@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
 class Vnet2VnetInboundMultiplePaValidatesMultipleEniSinglePortOverlayIpv6Test(Vnet2VnetInboundMultiplePaValidatesMultipleEniSinglePortTest):
     """
     Underlay IPv4 and Overlay IPv6 configs
@@ -1001,12 +1012,13 @@ class Vnet2VnetInboundMultiplePaValidatesMultipleEniSinglePortOverlayIpv6Test(Vn
         self.eni_mac_map_create(eni_id_0, self.rx_host_0.client.mac)  # ENI MAC
 
         # Inbound routing decap
+        addr_mask = self.tx_host_2.ip_prefix.split('/')
         self.inbound_routing_decap_create(eni_id_0, vni=self.tx_host_2.client.vni,
-                                          sip=self.tx_host_2.ip, sip_mask="255.255.255.0")
+                                          sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]))
 
         # Inbound routing decap PA Validate
         self.inbound_routing_decap_validate_create(eni_id_0, vni=self.tx_host_0.client.vni,
-                                                   sip=self.tx_host_0.ip, sip_mask="255.255.255.0",
+                                                   sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]),
                                                    src_vnet_id=src_vnet_0)
         # PA validation entry with Permit action
         self.pa_validation_create(self.tx_host_0.ip, src_vnet_0)
@@ -1019,8 +1031,9 @@ class Vnet2VnetInboundMultiplePaValidatesMultipleEniSinglePortOverlayIpv6Test(Vn
         self.eni_mac_map_create(eni_id_1, self.rx_host_1.client.mac)  # ENI MAC
 
         # Inbound routing PA Validate
+        addr_mask = self.tx_host_1.ip_prefix.split('/')
         self.inbound_routing_decap_validate_create(eni_id_1, vni=self.tx_host_1.client.vni,
-                                                   sip=self.tx_host_1.ip, sip_mask="255.255.255.0",
+                                                   sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]),
                                                    src_vnet_id=src_vnet_1)
         # PA validation entry with Permit action
         self.pa_validation_create(self.tx_host_1.ip, src_vnet_1)
@@ -1100,7 +1113,7 @@ class Vnet2VnetInboundMultiplePaValidatesMultipleEniTwoPortsOverlayIpv6Test(Vnet
 
 
 @group("draft")
-@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
+#@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
 class Vnet2VnetSingleInboundRouteMultiplePaValidateSinglePortTest(VnetApiEndpoints, VnetTrafficMixin):
     """
     Inbound Vnet to Vnet scenario test case with
@@ -1183,8 +1196,9 @@ class Vnet2VnetSingleInboundRouteMultiplePaValidateSinglePortTest(VnetApiEndpoin
         self.eni_mac_map_create(eni_id, self.rx_host.client.mac)  # ENI MAC
 
         # Inbound routing PA Validate
+        addr_mask = self.tx_host_0.ip_prefix.split('/')
         self.inbound_routing_decap_validate_create(eni_id, vni=self.tx_host_0.client.vni,
-                                                   sip=self.tx_host_0.ip, sip_mask="255.255.255.0",
+                                                   sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]),
                                                    src_vnet_id=src_vnet)
         # PA validation entries with Permit action
         self.pa_validation_create(self.tx_host_0.ip, src_vnet)
@@ -1219,7 +1233,7 @@ class Vnet2VnetSingleInboundRouteMultiplePaValidateSinglePortTest(VnetApiEndpoin
 
 
 @group("draft")
-@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
+#@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
 class Vnet2VnetSingleInboundRouteMultiplePaValidateSinglePortIpv6Test(Vnet2VnetSingleInboundRouteMultiplePaValidateSinglePortTest):
     """
     Underlay IPv4 and Overlay IPv6 configs
@@ -1306,8 +1320,9 @@ class Vnet2VnetSingleInboundRouteMultiplePaValidateSinglePortIpv6Test(Vnet2VnetS
         self.eni_mac_map_create(eni_id, self.rx_host.client.mac)  # ENI MAC
 
         # Inbound routing PA Validate
+        addr_mask = self.tx_host_0.ip_prefix.split('/')
         self.inbound_routing_decap_validate_create(eni_id, vni=self.tx_host_0.client.vni,
-                                                   sip=self.tx_host_0.ip, sip_mask="255.255.255.0",
+                                                   sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]),
                                                    src_vnet_id=src_vnet)
         # PA validation entries with Permit action
         self.pa_validation_create(self.tx_host_0.ip, src_vnet)
@@ -1353,7 +1368,7 @@ class Vnet2VnetSingleInboundRouteMultiplePaValidateTwoPortsIpv6Test(Vnet2VnetSin
 
 
 @group("draft")
-@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
+#@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
 class Vnet2VnetInboundEniSetUpDownSinglePortTest(VnetApiEndpoints, VnetTrafficMixin):
     """
     Inbound Vnet to Vnet test scenario
@@ -1391,8 +1406,9 @@ class Vnet2VnetInboundEniSetUpDownSinglePortTest(VnetApiEndpoints, VnetTrafficMi
         self.eni_mac_map_create(self.eni_id, self.rx_host.client.mac)  # ENI MAC
 
         # Inbound routing PA Validate
+        addr_mask = self.tx_host.ip_prefix.split('/')
         self.inbound_routing_decap_create(self.eni_id, vni=self.tx_host.client.vni,
-                                          sip=self.tx_host.ip, sip_mask="255.255.255.0")
+                                          sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]))
 
     def vnet2VnetEniUpTrafficTest(self, tx_equal_to_rx):
         """
@@ -1416,7 +1432,7 @@ class Vnet2VnetInboundEniSetUpDownSinglePortTest(VnetApiEndpoints, VnetTrafficMi
 
 
 @group("draft")
-@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
+#@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
 class Vnet2VnetInboundEniSetUpDownTwoPortsTest(Vnet2VnetInboundEniSetUpDownSinglePortTest):
     """
     Inbound Vnet to Vnet test scenario
@@ -2703,7 +2719,7 @@ class Vnet2VnetOutboundDstVnetIdRouteVnetDirectTwoPortstOverlayIpv6Test(Vnet2Vne
 
 
 @group("draft")
-@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
+#@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
 class Vnet2VnetInboundOutboundMultipleConfigsSinglePortTest(VnetApiEndpoints, VnetTrafficMixin):
     """
     Inbound and Outbound Vnet to Vnet test scenario
@@ -2780,8 +2796,9 @@ class Vnet2VnetInboundOutboundMultipleConfigsSinglePortTest(VnetApiEndpoints, Vn
         self.eni_mac_map_create(eni_id_3, self.host_3.client.mac)
 
         # ENI 0 inbound/outbound routing
+        addr_mask = self.host_2.ip_prefix.split('/')
         self.inbound_routing_decap_validate_create(eni_id=eni_id_0, vni=self.host_2.client.vni,
-                                                   sip=self.host_2.ip, sip_mask="255.255.255.0",
+                                                   sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]),
                                                    src_vnet_id=host_2_vnet)
         self.pa_validation_create(sip=self.host_2.ip,
                                   vnet_id=host_2_vnet)
@@ -2794,8 +2811,9 @@ class Vnet2VnetInboundOutboundMultipleConfigsSinglePortTest(VnetApiEndpoints, Vn
                                       overlay_dmac=self.host_2.client.mac)
 
         # ENI 3 inbound/outbound routing
+        addr_mask = self.host_1.ip_prefix.split('/')
         self.inbound_routing_decap_validate_create(eni_id=eni_id_3, vni=self.host_1.client.vni,
-                                                   sip=self.host_1.ip, sip_mask="255.255.255.0",
+                                                   sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]),
                                                    src_vnet_id=host_1_vnet)
         self.pa_validation_create(sip=self.host_1.ip,
                                   vnet_id=host_1_vnet)
@@ -2849,7 +2867,7 @@ class Vnet2VnetInboundOutboundMultipleConfigsSinglePortTest(VnetApiEndpoints, Vn
 
 
 @group("draft")
-@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
+#@skipIf(test_param_get('target') == 'bmv2', "Blocked on BMv2 by Issue #236")
 class Vnet2VnetInboundOutboundMultipleConfigsSinglePortOverlayIpv6Test(Vnet2VnetInboundOutboundMultipleConfigsSinglePortTest):
     """
     Underlay IPv4 and Overlay IPv6 configs
@@ -2916,8 +2934,9 @@ class Vnet2VnetInboundOutboundMultipleConfigsSinglePortOverlayIpv6Test(Vnet2Vnet
         self.eni_mac_map_create(eni_id_3, self.host_3.client.mac)
 
         # ENI 0 inbound/outbound routing
+        addr_mask = self.host_2.ip_prefix.split('/')
         self.inbound_routing_decap_validate_create(eni_id=eni_id_0, vni=self.host_2.client.vni,
-                                                   sip=self.host_2.ip, sip_mask="255.255.255.0",
+                                                   sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]),
                                                    src_vnet_id=host_2_vnet)
         self.pa_validation_create(sip=self.host_2.ip,
                                   vnet_id=host_2_vnet)
@@ -2930,8 +2949,9 @@ class Vnet2VnetInboundOutboundMultipleConfigsSinglePortOverlayIpv6Test(Vnet2Vnet
                                       overlay_dmac=self.host_2.client.mac)
 
         # ENI 3 inbound/outbound routing
+        addr_mask = self.host_1.ip_prefix.split('/')
         self.inbound_routing_decap_validate_create(eni_id=eni_id_3, vni=self.host_1.client.vni,
-                                                   sip=self.host_1.ip, sip_mask="255.255.255.0",
+                                                   sip=addr_mask[0], sip_mask=num_to_dotted_quad(addr_mask[1]),
                                                    src_vnet_id=host_1_vnet)
         self.pa_validation_create(sip=self.host_1.ip,
                                   vnet_id=host_1_vnet)
