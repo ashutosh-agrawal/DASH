@@ -3,10 +3,6 @@
 
 #include "dash_headers.p4"
 
-// UDP source port is initialized to 1234 in PTF. A hardware implementation is expected to
-// use entropy of the packet to populate UDP source port.
-#define UDP_SRC_PORT_VXLAN 1234
-
 #ifdef TARGET_BMV2_V1MODEL
 #define PUSH_VXLAN_TUNNEL_DEF(underlay_id, overlay_id) \
 action push_vxlan_tunnel_ ## underlay_id ## (inout headers_t hdr, \
@@ -43,7 +39,7 @@ action push_vxlan_tunnel_ ## underlay_id ## (inout headers_t hdr, \
     hdr. ## underlay_id ## _ipv4.hdr_checksum = 0; \
     \
     hdr. ## underlay_id ## _udp.setValid(); \
-    hdr. ## underlay_id ## _udp.src_port = UDP_SRC_PORT_VXLAN; \
+    hdr. ## underlay_id ## _udp.src_port = 0; \
     hdr. ## underlay_id ## _udp.dst_port = UDP_PORT_VXLAN; \
     hdr. ## underlay_id ## _udp.length = hdr. ## overlay_id ## _ipv4.total_len*(bit<16>)(bit<1>)hdr. ## overlay_id ## _ipv4.isValid() + \
                      hdr. ## overlay_id ## _ipv6.payload_length*(bit<16>)(bit<1>)hdr. ## overlay_id ## _ipv6.isValid() + \
@@ -100,7 +96,7 @@ action push_vxlan_tunnel_ ## underlay_id ## (inout headers_t hdr, \
     hdr. ## underlay_id ## _ipv4.hdr_checksum = 0; \
     \
     hdr. ## underlay_id ## _udp.setValid(); \
-    hdr. ## underlay_id ## _udp.src_port = 0x04D2; \
+    hdr. ## underlay_id ## _udp.src_port = 0; \
     hdr. ## underlay_id ## _udp.dst_port = UDP_PORT_VXLAN; \
     hdr. ## underlay_id ## _udp.length = (UDP_HDR_SIZE + VXLAN_HDR_SIZE + ETHER_HDR_SIZE + \
         ## overlay_id ## _ip_len); \
