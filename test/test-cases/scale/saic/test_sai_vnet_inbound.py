@@ -112,7 +112,7 @@ TEST_VNET_INBOUND_CONFIG = {
 }
 
 
-#@pytest.mark.skip(reason="https://github.com/sonic-net/DASH/issues/345 [P4Runtime] Invalid match type")
+@pytest.mark.skip(reason="https://github.com/sonic-net/DASH/issues/345 [P4Runtime] Invalid match type")
 class TestSaiVnetInbound:
 
     def test_vnet_inbound_create(self, dpu):
@@ -130,7 +130,6 @@ class TestSaiVnetInbound:
         pprint(result)
 
     @pytest.mark.ptf
-#    @pytest.mark.xfail(reason="https://github.com/sonic-net/DASH/issues/233")
     def test_vnet_inbound_traffic_check(self, dpu, dataplane):
         """Verify traffic forwarding in PTF style"""
 

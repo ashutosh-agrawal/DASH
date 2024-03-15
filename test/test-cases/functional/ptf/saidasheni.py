@@ -54,8 +54,6 @@ class CreateDeleteEniTest(VnetAPI):
         self.createDirectionLookupTest()
         self.createEniTest()
         self.createEniEtherAddressMapTest()
-#        if not test_param_get('target') == 'bmv2':
-            # Issue #233
         self.createInboundRoutingEntryTest()
         self.createPaValidationTest()
         self.createOutboundRoutingEntryTest()
@@ -978,7 +976,6 @@ class CreateDeleteEniTest(VnetAPI):
         self.assertEqual(self.status(), SAI_STATUS_SUCCESS)
 
 
-#@skipIf(test_param_get('target') == 'bmv2', "Blocked by Issue #233. Inbound Routing is not supported in BMv2.")
 class EniScaleTest(VnetAPI):
     """
     Verifies ENI scaling:
@@ -1084,7 +1081,6 @@ class EniScaleTest(VnetAPI):
         print("PASS")
 
 
-#@skipIf(test_param_get('target') == 'bmv2', "Blocked by Issue #233. Inbound Routing is not supported in BMv2.")
 class CreateTwoSameEnisNegativeTest(VnetAPI):
     """
     Verifies failure in case of creation the same ENIs in one VNET

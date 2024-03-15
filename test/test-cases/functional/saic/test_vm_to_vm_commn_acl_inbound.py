@@ -84,7 +84,6 @@ class TestAclInbound:
         udp.src_port.value = 11638
         udp.dst_port.value = 4789
 
-        #vxlan.flags.value = 
         vxlan.vni.value = 101
         vxlan.reserved0.value = 0
         vxlan.reserved1.value = 0

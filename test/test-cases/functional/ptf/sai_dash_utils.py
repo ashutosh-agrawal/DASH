@@ -549,12 +549,12 @@ class VnetApiEndpoints(VnetAPI):
         self.rx_host.port = self.tx_host.port
         # MAC address is hardcoded to 0 since underlay routing is not completely implemented.
         self.rx_host.mac = "00:00:00:00:00:00"
-#        self.rx_host.mac = self.tx_host.mac
+        #self.rx_host.mac = self.tx_host.mac
 
         self.rx_host.peer.port = self.tx_host.peer.port
         # MAC address is hardcoded to 0 since underlay routing is not completely implemented.
         self.rx_host.peer.mac = "00:00:00:00:00:00"
-#        self.rx_host.peer.mac = self.tx_host.peer.mac
+        #self.rx_host.peer.mac = self.tx_host.peer.mac
         self.rx_host.peer.ip = self.tx_host.peer.ip
 
     @staticmethod
@@ -608,7 +608,6 @@ class VnetTrafficMixin:
         with_udp_chksum = False
     else:
         with_udp_chksum = True
-    
     # TCP flags
     SYN = "S"
     SYN_ACK = "SA"
@@ -977,6 +976,7 @@ class VnetTrafficMixin:
                                                         **{self.ip_dst_outer_pkt: server.ip},
                                                         **{self.ip_src_outer_pkt: server.peer.ip},  # VIP
                                                         with_udp_chksum=self.with_udp_chksum,
+                                                        udp_sport=0,
                                                         vxlan_vni=server.client.vni,
                                                         inner_frame=exp_client_inner_pkt)
 
@@ -1029,6 +1029,7 @@ class VnetTrafficMixin:
                                                            **{self.ip_dst_outer_pkt: client.ip},
                                                            **{self.ip_src_outer_pkt: client.peer.ip},  # VIP
                                                            with_udp_chksum=self.with_udp_chksum,
+                                                           udp_sport=0,
                                                            vxlan_vni=client.client.vni,
                                                            inner_frame=server_inner_pkt)
 
@@ -1178,6 +1179,7 @@ class VnetTrafficMixin:
                                                            **{self.ip_dst_inner_pkt: client.ip},
                                                            **{self.ip_src_inner_pkt: client.peer.ip},  # VIP
                                                            with_udp_chksum=self.with_udp_chksum,
+                                                           udp_sport=0,
                                                            vxlan_vni=client.client.vni,
                                                            inner_frame=exp_server_inner_pkt)
 
@@ -1280,6 +1282,7 @@ class VnetTrafficMixin:
                                                 **{self.ip_dst_outer_pkt: server.ip},
                                                 **{self.ip_src_outer_pkt: server.peer.ip},  # VIP
                                                 with_udp_chksum=self.with_udp_chksum,
+                                                udp_sport=0,
                                                 vxlan_vni=server.client.vni,
                                                 inner_frame=exp_client_inner_pkt)
 
@@ -1296,6 +1299,7 @@ class VnetTrafficMixin:
                                                 **{self.ip_dst_outer_pkt: client.ip},
                                                 **{self.ip_src_outer_pkt: client.peer.ip},  # VIP
                                                 with_udp_chksum=self.with_udp_chksum,
+                                                udp_sport=0,
                                                 vxlan_vni=client.client.vni,
                                                 inner_frame=server_inner_pkt)
         send_packets = OrderedDict()
@@ -1358,6 +1362,7 @@ class VnetTrafficMixin:
                                                 **{self.ip_dst_outer_pkt: server.ip},
                                                 **{self.ip_src_outer_pkt: server.peer.ip},  # VIP
                                                 with_udp_chksum=self.with_udp_chksum,
+                                                udp_sport=0,
                                                 vxlan_vni=server.client.vni,
                                                 inner_frame=exp_client_inner_pkt)
 
@@ -1374,6 +1379,7 @@ class VnetTrafficMixin:
                                                 **{self.ip_dst_outer_pkt: client.ip},
                                                 **{self.ip_src_outer_pkt: client.peer.ip},
                                                 with_udp_chksum=self.with_udp_chksum,
+                                                udp_sport=0,
                                                 vxlan_vni=client.client.vni,
                                                 inner_frame=server_inner_pkt)
         send_packets = OrderedDict()
@@ -1471,6 +1477,7 @@ class VnetTrafficMixin:
                                          **{self.ip_dst_outer_pkt: server.ip},
                                          **{self.ip_src_outer_pkt: server.peer.ip},  # VIP
                                          with_udp_chksum=self.with_udp_chksum,
+                                         udp_sport=0,
                                          vxlan_vni=server.client.vni,
                                          inner_frame=exp_inner_pkt)
 
